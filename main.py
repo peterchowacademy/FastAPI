@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.params import Body
 from pydantic import BaseModel
-
+from typing import Optional
 
 app = FastAPI()
 
@@ -10,6 +10,9 @@ app = FastAPI()
 class Post(BaseModel):
     title: str
     content: str
+    published: bool = True
+    rating: Optional[int] = None
+
 
 
 # request get Methods url: '/'
@@ -32,10 +35,11 @@ def get_posts():
 extract all the fileds from 'Body' and converted to 'python dictionary'
 and stored as a variable of 'payload'
 '''
-@app.post("/createposts")
-def create_posts(new_post:Post):
-    print(new_post)
+@app.post("/posts")
+def create_posts(post: Post):
+    print(post.rating) #showing one class attribute
+    print(post) #this is a pedantic model
+    print(post.dict()) #convert the pedantic model to dictionary
+    return {"data": post}
     # print(new_post.title)
-    return {"data": "new_post"}
-
-#title str, content str, 
+#title str, content str,

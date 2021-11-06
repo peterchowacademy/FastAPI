@@ -1,6 +1,0 @@
-#When you turn on the terminal again, you need to enable the virtual environment by enter: \
-#to change to the virtual environment
-source venv/bin/activate 
-
-#start web server and enable the auto refresh of the server
-uvicorn main:app --reload 

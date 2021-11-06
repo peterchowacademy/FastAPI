@@ -1,0 +1,16 @@
+##Give the path of the python virtual environment to your OS system
+#Windows:
+py -3 -m venv venv
+#Mac:
+python3 -m venv venv
+##add the python interpreter to the programme, just specify the python exe location
+venv/sripts/python.exe
+#When you turn on the terminal again, you need to enable the virtual environment by enter: \
+#to change to the virtual environment (Mac)
+source venv/bin/activate 
+#to change to the virtual environment (Windows)
+#start web server and enable the auto refresh of the server
+uvicorn main:app --reload
+
+##install FastAPI on your virtual environment
+pip install fastapi[all]
