@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
 from random import randrange
+
 
 app = FastAPI()
 
@@ -33,6 +34,10 @@ def find_post(id):
         if p["id"] == id:
             return p
 
+def find_index_post(id):
+    for i, p in enumerate(my_posts):
+        if p["id"] == id:
+            return i
 
 @app.get("/")  # python decorator
 # async def root(): # async is when your function take async task such as long time connection for DB
@@ -52,7 +57,7 @@ and stored as a variable of 'payload'
 
 
 @app.post("/posts") #define the decorator
-def create_posts(post: Post):
+def create_posts(post: Post, status_code=status.HTTP_201_CREATED):
     # print(post.rating)  # showing one class attribute
     # print(post)  # this is a pedantic model
     # print(post.dict())  # convert the pydantic model to dictionary
@@ -66,4 +71,22 @@ def create_posts(post: Post):
 @app.get("/posts/{id}") #parathesis refers to the path parameter 
 def get_post(id : int): #check the if the id is integer, str is string
     post = find_post(id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f"post with id {id} was not found")
+        '''
+        #this is before use of def get_post(id : int, response : Response), 
+        # and marked the response:Response in def
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {'message' : f"post with id {id} was not found"}
+        '''
     return {"post_detail" : post}
+
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(id):
+    #delete the post 
+    #find the index in the array that has required ID
+    #my_posts.pop(id)
+    index = find_index_post(id)
+    my_posts.pop(index)
+    return Response(status_code=status.HTTP_204_NO_CONTENT) #204 when you delete sth, you dont want to send data back
