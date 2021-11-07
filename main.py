@@ -28,6 +28,11 @@ my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1
 ("/path/vote") then your https should go to this path visist
 '''
 
+def find_post(id):
+    for p in my_posts:
+        if p["id"] == id:
+            return p
+
 
 @app.get("/")  # python decorator
 # async def root(): # async is when your function take async task such as long time connection for DB
@@ -46,7 +51,7 @@ and stored as a variable of 'payload'
 '''
 
 
-@app.post("/posts")
+@app.post("/posts") #define the decorator
 def create_posts(post: Post):
     # print(post.rating)  # showing one class attribute
     # print(post)  # this is a pedantic model
@@ -58,5 +63,7 @@ def create_posts(post: Post):
     # print(new_post.title)
 # title str, content str,
 
-
-
+@app.get("/posts/{id}") #parathesis refers to the path parameter 
+def get_post(id : int): #check the if the id is integer, str is string
+    post = find_post(id)
+    return {"post_detail" : post}
