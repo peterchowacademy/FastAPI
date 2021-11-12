@@ -5,7 +5,7 @@ from typing import Optional
 from random import randrange
 
 
-app = FastAPI()
+app = FastAPI()  #'app' is the instance of this python, which is the FastAPI instance
 
 
 ##making a class for the post and extend to the BaseModel - pydantic model

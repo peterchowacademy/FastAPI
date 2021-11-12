@@ -14,5 +14,11 @@ run the activate.bak
 #start web server and enable the auto refresh of the server
 uvicorn main:app --reload
 
+#in a new file dictory
+uvicorn app.main:app --reload
+
 ##install FastAPI on your virtual environment
 pip install fastapi[all]
+
+##Postgres SuperUser
+Password1234
