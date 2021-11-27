@@ -3,6 +3,8 @@ from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
 from random import randrange
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 
 app = FastAPI()  #'app' is the instance of this python, which is the FastAPI instance
@@ -14,7 +16,16 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
+
+try:
+    # conn = psycopg2.connect(host, database, user, password)
+    conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres',
+                            password='Password1234', cursor_factory=RealDictCursor)
+    cursor = conn.cursor()
+    print("Database connection was successful")
+except Exception as error:
+    print("Connecting to database failed")
+    print("Error: ", error )
 
 
 # save the posts in memory (before we set up the database) and state the properties, ID is specific for that particular post
