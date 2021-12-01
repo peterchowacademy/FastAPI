@@ -1,3 +1,5 @@
+import time
+
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel
@@ -17,15 +19,18 @@ class Post(BaseModel):
     content: str
     published: bool = True
 
-try:
-    # conn = psycopg2.connect(host, database, user, password)
-    conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres',
-                            password='Password1234', cursor_factory=RealDictCursor)
-    cursor = conn.cursor()
-    print("Database connection was successful")
-except Exception as error:
-    print("Connecting to database failed")
-    print("Error: ", error )
+while True:
+    try:
+        # conn = psycopg2.connect(host, database, user, password)
+        conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres',
+                                password='Password1234', cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        print("Database connection was successful")
+        break
+    except Exception as error:
+        print("Connecting to database failed")
+        print("Error: ", error )
+        time.sleep(2)
 
 
 # save the posts in memory (before we set up the database) and state the properties, ID is specific for that particular post
@@ -58,7 +63,9 @@ def root():
 
 @app.get("/posts")
 def get_posts():
-    return {"data": my_posts}
+    cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.fetchall()
+    return {"data": posts}
 
 
 '''
@@ -69,19 +76,24 @@ and stored as a variable of 'payload'
 
 @app.post("/posts") #define the decorator
 def create_posts(post: Post, status_code=status.HTTP_201_CREATED):
+    cursor.execute("""INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """,
+                   (post.title, post.content, post.published))
+    new_post = cursor.fetchone()
+    conn.commit()
     # print(post.rating)  # showing one class attribute
     # print(post)  # this is a pedantic model
     # print(post.dict())  # convert the pydantic model to dictionary
-    post_dict = post.dict()
-    post_dict["id"] = randrange(0,1000000)
-    my_posts.append(post_dict)  #append the postID to the post
-    return {"data": post}
+    # post_dict = post.dict()
+    # post_dict["id"] = randrange(0,1000000)
+    # my_posts.append(post_dict)  #append the postID to the post
+    return {"data": new_post}
     # print(new_post.title)
 # title str, content str,
 
 @app.get("/posts/{id}") #parathesis refers to the path parameter 
 def get_post(id : int): #check the if the id is integer, str is string
-    post = find_post(id)
+    cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id)))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"post with id {id} was not found")
