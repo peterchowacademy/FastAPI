@@ -86,7 +86,11 @@ def create_posts(post: Post, db: Session = Depends(get_db)):
     # new_post = cursor.fetchone()
     # conn.commit()
     # my_posts.append(post_dict)  #append the postID to the post
-    new_post = models.Post(**post.dict())
+    # new_post = models.Post(**post.dict())
+    # db.add(new_post)
+    # db.commit()
+    # db.refresh(new_post)
+    new_post = models.Post(title=post.title, content=post.content, published=post.published)
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
