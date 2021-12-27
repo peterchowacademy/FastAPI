@@ -3,7 +3,7 @@ from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.functions import count
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Boolean
-from database import Base
+from .database import Base
 from sqlalchemy import Column, Integer, String, engine
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
